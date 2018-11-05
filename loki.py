@@ -1474,7 +1474,6 @@ if __name__ == '__main__':
     # Update
     if args.update:
         updateLoki(sigsOnly=False)
-        sys.exit(0)
 
     logger.log("NOTICE", "Init", "Starting Loki Scan VERSION: {3} SYSTEM: {0} TIME: {1} PLATFORM: {2}".format(
         getHostname(os_platform), getSyslogTimestamp(), getPlatformFull(), logger.version))

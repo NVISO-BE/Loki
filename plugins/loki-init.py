@@ -17,7 +17,7 @@ def Escape(data):
     return data.replace('\n', '').replace('\r', '').replace(',', '')
 
 
-def LokiCustomFormatter(filetype, format, *args):
+def LokiCustomFormatter(filetype, format, args):
     if FORCE_JSON and filetype not in (STDOUT_LINE, STDOUT_CSV):
         return json.dumps({"timestamp": args[0],
                            "hostname": args[1],

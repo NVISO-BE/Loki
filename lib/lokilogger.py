@@ -106,7 +106,7 @@ class LokiLogger():
         if self.CustomFormatter == None:
             return format.format(*args)
         else:
-            return self.CustomFormatter(type, format, *args)
+            return self.CustomFormatter(type, format, args)
 
     def log_to_stdout(self, message, mes_type):
         # check tty encoding
