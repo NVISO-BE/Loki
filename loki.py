@@ -1041,7 +1041,7 @@ class Loki(object):
 
     def initialize_yara_rules(self):
 
-        yaraRules = ""
+        yaraRules = []
         dummy = ""
         rule_count = 0
 
@@ -1086,7 +1086,7 @@ class Loki(object):
                             if extension == ".yar" or extension == ".yara":
                                 with open(yaraRuleFile, 'r') as rulefile:
                                     data = rulefile.read()
-                                    yaraRules += data
+                                    yaraRules.append(data)
 
                         except Exception, e:
                             logger.log("ERROR", "Init", "Error reading signature file %s ERROR: %s" % (yaraRuleFile, sys.exc_info()[1]))
@@ -1096,14 +1096,17 @@ class Loki(object):
 
             # Compile
             try:
-                logger.log("INFO", "Init", "Initializing all YARA rules at once (composed string of all rule files)")
-                compiledRules = yara.compile(source=yaraRules, externals={
-                    'filename': dummy,
-                    'filepath': dummy,
-                    'extension': dummy,
-                    'filetype': dummy,
-                    'md5': dummy
-                })
+                logger.log("INFO", "Init", "Initializing all YARA rule files one by one to prevent issues with duplicate rule names")
+                compiledRules = []
+                for yaraRule in yaraRules:
+                    compiledRules.append(yara.compile(source=yaraRule, externals={
+                        'filename': dummy,
+                        'filepath': dummy,
+                        'extension': dummy,
+                        'filetype': dummy,
+                        'md5': dummy
+                    }))
+
                 logger.log("INFO", "Init", "Initialized %d Yara rules" % rule_count)
             except Exception, e:
                 traceback.print_exc()
@@ -1111,7 +1114,7 @@ class Loki(object):
                 sys.exit(1)
 
             # Add as Lokis YARA rules
-            self.yara_rules.append(compiledRules)
+            self.yara_rules.extend(compiledRules)
 
             # Add private rules
             logger.log("INFO", "Init", "Reading private rules from binary ...")
